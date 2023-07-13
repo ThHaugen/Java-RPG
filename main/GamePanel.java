@@ -1,6 +1,9 @@
 package main;
 
 import javax.swing.JPanel;
+
+import entity.Player;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -20,10 +23,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+    Player player = new Player(this, keyHandler);
 
     int playerX = 100;
     int playerY = 100;
     int playerSpeed = 4;
+    int FPS = 60;
 
     public GamePanel() {
 
@@ -43,10 +48,23 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
 
+        double drawInterval = 1000000000 / FPS;
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+
         while (gameThread != null) {
 
-            update();
-            repaint();
+            currentTime = System.nanoTime();
+
+            delta += (currentTime - lastTime) / drawInterval;
+            lastTime = currentTime;
+
+            if (delta >= 1) {
+                update();
+                repaint();
+                delta--;
+            }
         }
     }
 
