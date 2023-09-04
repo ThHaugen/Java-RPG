@@ -2,6 +2,7 @@ package entity;
 
 //import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,17 +17,25 @@ public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
 
+    public final int screenX;
+    public final int screenY;
+
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
         this.keyH = keyH;
+
+        screenX = gp.screenWidth/2 - gp.tileSize/2;
+        screenY = gp.screenHeight/2 - gp.tileSize/2; 
+
+        hitBox = new Rectangle(8, 16, gp.tileSize*(2/3), gp.tileSize*(2/3));
 
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
+        worldX = 100;
+        worldY = 100;
         speed = 4;
         direction = "down";
     }
@@ -53,20 +62,23 @@ public class Player extends Entity {
 
         if (keyH.upPressed) {
             direction = "up";
-            y -= speed;
+            worldY -= speed;
         } else if (keyH.downPressed) {
             direction = "down";
-            y += speed;
+            worldY += speed;
         } else if (keyH.rightPressed) {
             direction = "right";
-            x += speed;
+            worldX += speed;
         } else if (keyH.leftPressed) {
             direction = "left";
-            x -= speed;
+            worldX -= speed;
         } else {
             spriteCounter = 15;
             spriteNum = 1;
         }
+
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
 
         spriteCounter++;
         if (spriteCounter > 20) {
@@ -115,7 +127,7 @@ public class Player extends Entity {
             default:
                 break;
         }
-        g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 
     }
 }
