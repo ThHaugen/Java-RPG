@@ -27,15 +27,15 @@ public class Player extends Entity {
         screenX = gp.screenWidth/2 - gp.tileSize/2;
         screenY = gp.screenHeight/2 - gp.tileSize/2; 
 
-        hitBox = new Rectangle(8, 16, gp.tileSize*(2/3), gp.tileSize*(2/3));
+        hitBox = new Rectangle(8, 16, 32, 32);
 
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        worldX = 100;
-        worldY = 100;
+        worldX = 424;
+        worldY = 400;
         speed = 4;
         direction = "down";
     }
@@ -60,35 +60,55 @@ public class Player extends Entity {
 
     public void update() {
 
-        if (keyH.upPressed) {
-            direction = "up";
-            worldY -= speed;
-        } else if (keyH.downPressed) {
-            direction = "down";
-            worldY += speed;
-        } else if (keyH.rightPressed) {
-            direction = "right";
-            worldX += speed;
-        } else if (keyH.leftPressed) {
-            direction = "left";
-            worldX -= speed;
-        } else {
-            spriteCounter = 15;
-            spriteNum = 1;
-        }
+        if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
 
-        collisionOn = false;
-        gp.cChecker.checkTile(this);
-
-        spriteCounter++;
-        if (spriteCounter > 20) {
-            if (spriteNum == 1) {
-                spriteNum = 2;
-            } else if (spriteNum == 2) {
+            if (keyH.upPressed) {
+                direction = "up";  
+            } else if (keyH.downPressed) {
+                direction = "down";  
+            } else if (keyH.rightPressed) {
+                direction = "right";
+            } else if (keyH.leftPressed) {
+                direction = "left";
+            } else {
+                spriteCounter = 15;
                 spriteNum = 1;
             }
-            spriteCounter = 0;
+
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
+
+            if (collisionOn == false) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
+                
+            }
+
+            spriteCounter++;
+            if (spriteCounter > 20) {
+                if (spriteNum == 1) {
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
+                    spriteNum = 1;
+                }
+                spriteCounter = 0;
+            }
+        }else{
+            spriteNum = 1;
         }
+        
     }
 
     public void draw(Graphics2D g2) {
